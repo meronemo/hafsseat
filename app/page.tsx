@@ -1,4 +1,5 @@
-import { RunButton } from "@/components/run-button"
+import { LoginButton } from "@/components/LoginButton"
+import { RunButton } from "@/components/RunButton"
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center">
+          <LoginButton />
           <RunButton />
         </div>
       </div>
