@@ -16,7 +16,7 @@ export function LoginButton() {
   return (
     <>
       Not signed in <br />
-      <Button onClick={() => signIn()}>Sign in</Button>
+      <Button onClick={() => signIn('google', { callbackUrl: '/' })}>Sign in</Button>
     </>
   )
 }
