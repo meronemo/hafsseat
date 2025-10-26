@@ -1,6 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react"
+import { useEffect } from "react"
 import { LoginButton } from "@/components/LoginButton"
 import { RunButton } from "@/components/RunButton"
 import { useRouter } from "next/navigation"
@@ -10,10 +11,14 @@ export default function Home() {
   const user = session?.user as any;
   const isFirstLogin = user && (user.grade === null || user.class === null);
   const router = useRouter();
-  if (isFirstLogin) {
-    router.push("/confirm-representative");
-  } else {
-    return (
+
+  useEffect(() => {
+    if (isFirstLogin) {
+      router.push("/confirm-representative");
+    }
+  }, [isFirstLogin, router]);
+
+  return (
       <main className="min-h-screen flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-2xl space-y-8">
           <div className="text-center space-y-3">
@@ -35,5 +40,4 @@ export default function Home() {
         </div>
       </main>
     )
-  }
 }

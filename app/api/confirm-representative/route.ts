@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const userEmail = session.user.email;
     const userGrade = Number(body?.grade);
-    const userClass = Number(body?.class);
+    const userClass = body?.class;
 
     const { error } = await supabase
       .schema("next_auth")
