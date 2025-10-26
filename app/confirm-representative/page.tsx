@@ -17,7 +17,9 @@ export default function ConfirmRepresentativePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  if (!session?.user) {
+  const user = session?.user;
+
+  if (!user || user.grade || user.class) {
     router.push("/");
     return;
   }
@@ -26,16 +28,10 @@ export default function ConfirmRepresentativePage() {
   const userName = session.user.name || "";
   const userStudentId = userName.replace(/\D+/g, '');
   const userGrade = Number(userStudentId[0]);
-  const userClass = Number(userStudentId.slice(1,3));
-
-  const handleCancel = async () => {
-    signOut();
-    router.push("/");
-  }
+  const userClass = userStudentId.slice(1,3);
 
   const handleConfirm = async () => {
     setIsLoading(true);
-
     const res = await fetch("/api/confirm-representative", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -46,6 +42,8 @@ export default function ConfirmRepresentativePage() {
     });
 
     if (res.ok) {
+      session.user.grade = userGrade;
+      session.user.class = userClass;
       router.push("/");
     } else {
       const data = await res.json();
@@ -77,14 +75,14 @@ export default function ConfirmRepresentativePage() {
 
             <div className="mb-4">
               <h3 className="text-sm text-muted-foreground">학급</h3>
-              <div className="text-lg font-bold">{userGrade}학년 {userClass}반</div>
+              <div className="text-lg font-bold">{userGrade}학년 {Number(userClass)}반</div>
             </div>
 
             <p className="text-md text-muted-foreground">위 학급의 대표자이신가요? 한 번 확인한 이후에는 변경할 수 없습니다.</p>
           </CardContent>
 
           <CardFooter className="px-6 py-4 flex justify-end gap-3">
-            <Button variant="ghost" onClick={handleCancel}>취소</Button>
+            <Button variant="ghost" onClick={() => {signOut()}}>취소</Button>
             <Button
               size="lg"
               onClick={handleConfirm}
