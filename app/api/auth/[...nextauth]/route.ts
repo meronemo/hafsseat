@@ -1,9 +1,14 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
+import { SupabaseAdapter } from "@next-auth/supabase-adapter"
 
 const isProd = process.env.NODE_ENV === "production"
 
 export const authOptions = {
+  adapter: SupabaseAdapter({
+    url: process.env.SUPABASE_URL!,
+    secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  }),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID!,
@@ -16,6 +21,9 @@ export const authOptions = {
       },
     }),
   ],
+  logger: {
+    error(code: string, metadata?: unknown) { console.error(code, metadata) }
+  }
 };
 
 const handler = NextAuth(authOptions);

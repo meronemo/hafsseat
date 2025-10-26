@@ -3,9 +3,15 @@
 import { useSession } from "next-auth/react"
 import { LoginButton } from "@/components/LoginButton"
 import { RunButton } from "@/components/RunButton"
+import { useRouter } from "next/navigation"
 
 export default function Home() {
   const { data: session, status } = useSession();
+  const user = session?.user as any;
+  const isFirstLogin = user && (user.grade === undefined || user.class === undefined);
+  const router = useRouter();
+  if (isFirstLogin) router.push("/confirm-representative");
+
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-6">
