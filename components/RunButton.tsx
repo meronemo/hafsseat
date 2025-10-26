@@ -21,7 +21,7 @@ export function RunButton() {
       size="lg"
       onClick={handleRun}
       disabled={isRunning}
-      className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all"
+      className="text-lg px-8 py-4 shadow-lg hover:shadow-xl transition-all"
     >
       <Shuffle className="w-5 h-5 mr-2" />
       {isRunning ? "실행 중..." : "자리 배치 실행"}

@@ -35,6 +35,14 @@ export const authOptions = {
   callbacks: {
     async session({ session, token, user }) {
       try {
+        if (session?.user?.name) {
+          try {
+            session.user.username = String(session.user.name).replace(/\d+/g, "").trim();
+          } catch (e) {
+            session.user.username = session.user.name
+          }
+        }
+
         if (session?.user?.email) {
           const { data, error } = await supabaseAdmin
             .schema("next_auth")
@@ -42,7 +50,7 @@ export const authOptions = {
             .select("grade, class")
             .eq("email", session.user.email)
             .single();
-
+          
           if (!error && data) {
             session.user.grade = data.grade ?? null;
             session.user.class = data.class ?? null;
