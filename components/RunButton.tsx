@@ -1,11 +1,15 @@
 "use client"
 
+import { useState } from "react"
+import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Shuffle } from "lucide-react"
-import { useState } from "react"
 
 export function RunButton() {
   const [isRunning, setIsRunning] = useState(false)
+  const { data: session } = useSession();
+
+  if (!session) return;
 
   const handleRun = async () => {
     setIsRunning(true)

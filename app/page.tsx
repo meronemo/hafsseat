@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useEffect } from "react"
-import { LoginButton } from "@/components/LoginButton"
+import { UserArea } from "@/components/UserArea"
 import { RunButton } from "@/components/RunButton"
 import { useRouter } from "next/navigation"
 
@@ -31,14 +31,14 @@ export default function Home() {
             ) : session ? (
               <div className="space-y-6">
                 <div className="text-center">
-                  <LoginButton />
+                  <UserArea />
                 </div>
                 <div className="text-center">
                   <RunButton />
                 </div>
               </div>
             ) : (
-              <LoginButton />
+              <UserArea />
             )}
           </div>
         </div>
