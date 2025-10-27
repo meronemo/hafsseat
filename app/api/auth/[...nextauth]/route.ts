@@ -8,9 +8,9 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
   { auth: { persistSession: false } }
-);
+)
 
-const isProd = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === "production"
 
 export const authOptions = {
   adapter: SupabaseAdapter({
@@ -37,7 +37,7 @@ export const authOptions = {
       try {
         if (session?.user?.name) {
           try {
-            session.user.username = String(session.user.name).replace(/\d+/g, "").trim();
+            session.user.username = String(session.user.name).replace(/\d+/g, "").trim()
           } catch (e) {
             session.user.username = session.user.name
           }
@@ -49,21 +49,21 @@ export const authOptions = {
             .from("users")
             .select("grade, class")
             .eq("email", session.user.email)
-            .single();
+            .single()
           
           if (!error && data) {
-            session.user.grade = data.grade ?? null;
-            session.user.class = data.class ?? null;
+            session.user.grade = data.grade ?? null
+            session.user.class = data.class ?? null
           }
         }
       } catch (e) {
         console.error("session callback error:", e)
       }
-      return session;
+      return session
     }
   }
-};
+}
 
-const handler = NextAuth(authOptions);
+const handler = NextAuth(authOptions)
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST }

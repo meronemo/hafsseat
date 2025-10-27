@@ -7,9 +7,9 @@ import { Shuffle, Loader2 } from "lucide-react"
 
 export function RunButton() {
   const [isRunning, setIsRunning] = useState(false)
-  const { data: session } = useSession();
+  const { data: session } = useSession()
 
-  if (!session) return;
+  if (!session) return
 
   const handleRun = async () => {
     setIsRunning(true)

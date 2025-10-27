@@ -15,16 +15,16 @@ import { GeneralSettings } from "./general"
 import { StudentsSettings } from "./students"
 
 export default function Settings() {
-  const { data: session, status } = useSession();
-  const user = session?.user as any;
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState("general");
+  const { data: session, status } = useSession()
+  const user = session?.user as any
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState("general")
 
   useEffect(() => {
     if (status !== "loading" && !session) {
-      router.push("/");
+      router.push("/")
     }
-  }, [session, status, router]);
+  }, [session, status, router])
 
   if (status === "loading") {
     return (
@@ -38,14 +38,14 @@ export default function Settings() {
     return null
   }
 
-  const grade = user?.grade ?? null;
-  const cls = user?.class ?? null;
-  const displayClass = grade && cls ? `${grade}학년 ${cls}반` : "학급 정보 없음";
+  const grade = user?.grade ?? null
+  const cls = user?.class ?? null
+  const displayClass = grade && cls ? `${grade}학년 ${cls}반` : "학급 정보 없음"
 
   const tabs = [
     { id: "general", label: "일반", icon: Info },
     { id: "students", label: "학생", icon: User },
-  ];
+  ]
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-6">
@@ -86,7 +86,7 @@ export default function Settings() {
             {/* Tabs */}
             <div className="flex gap-2 border-b border-border">
               {tabs.map((tab) => {
-                const Icon = tab.icon;
+                const Icon = tab.icon
                 return (
                   <button
                     key={tab.id}
@@ -103,7 +103,7 @@ export default function Settings() {
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full" />
                     )}
                   </button>
-                );
+                )
               })}
             </div>
 

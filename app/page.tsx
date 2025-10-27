@@ -7,16 +7,16 @@ import { RunButton } from "@/components/RunButton"
 import { useRouter } from "next/navigation"
 
 export default function Home() {
-  const { data: session, status } = useSession();
-  const user = session?.user as any;
-  const isFirstLogin = user && (user.grade === null || user.class === null);
-  const router = useRouter();
+  const { data: session, status } = useSession()
+  const user = session?.user as any
+  const isFirstLogin = user && (user.grade === null || user.class === null)
+  const router = useRouter()
 
   useEffect(() => {
     if (isFirstLogin) {
-      router.push("/confirm-representative");
+      router.push("/confirm-representative")
     }
-  }, [isFirstLogin, router]);
+  }, [isFirstLogin, router])
 
   return (
       <main className="min-h-screen flex flex-col items-center justify-center p-6">

@@ -8,9 +8,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { User, LogOut, Loader2, Settings } from "lucide-react"
 
 export function UserArea() {
-  const { data: session, status } = useSession();
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const { data: session, status } = useSession()
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   if (status === "loading") {
     return (
@@ -40,10 +40,10 @@ export function UserArea() {
     )
   }
 
-  const user = session.user as any;
-  const grade = user?.grade ?? null;
-  const cls = user?.class ?? null;
-  const displayClass = `${grade}학년 ${cls}반`;
+  const user = session.user as any
+  const grade = user?.grade ?? null
+  const cls = user?.class ?? null
+  const displayClass = `${grade}학년 ${cls}반`
 
   return (
     <Card className="w-full max-w-md mx-auto shadow-xs">

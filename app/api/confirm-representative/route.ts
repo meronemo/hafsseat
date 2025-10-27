@@ -10,28 +10,28 @@ const supabase = createClient(
 
 export async function POST(req: Request) {
   try {
-    const session: any = await getServerSession(authOptions as any);
+    const session: any = await getServerSession(authOptions as any)
 
     if (!session || !session.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const body = await req.json();
-    const userEmail = session.user.email;
-    const userGrade = Number(body?.grade);
-    const userClass = body?.class;
+    const body = await req.json()
+    const userEmail = session.user.email
+    const userGrade = Number(body?.grade)
+    const userClass = body?.class
 
     const { error } = await supabase
       .schema("next_auth")
       .from("users")
       .update({ grade: userGrade, class: userClass })
       .eq("email", userEmail)
-      .single();
+      .single()
 
-    if (error) return NextResponse.json({ error: error }, { status: 400 });
-    return NextResponse.json({ ok: true });
+    if (error) return NextResponse.json({ error: error }, { status: 400 })
+    return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error("/api/confirm-representative error:", err);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("/api/confirm-representative error:", err)
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }

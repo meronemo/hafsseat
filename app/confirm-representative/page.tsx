@@ -13,31 +13,31 @@ import {
 } from "@/components/ui/card"
 
 export default function ConfirmRepresentativePage() {
-  const { data: session } = useSession();
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const user = session?.user;
+  const { data: session } = useSession()
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const user = session?.user
 
   useEffect(() => {
     if (!user || (user?.grade && user?.class)) {
-      router.push("/");
+      router.push("/")
     }
-  }, [user, router]);
+  }, [user, router])
 
-  if (!session) return null;
+  if (!session) return null
 
-  const userEmail = session.user.email || "";
-  const userName = session.user.name || "";
-  const userStudentId = userName.replace(/\D+/g, '');
-  const userGrade = Number(userStudentId[0]);
-  const userClass = userStudentId.slice(1,3);
-  const userClassNumber = Number(userClass);
+  const userEmail = session.user.email || ""
+  const userName = session.user.name || ""
+  const userStudentId = userName.replace(/\D+/g, '')
+  const userGrade = Number(userStudentId[0])
+  const userClass = userStudentId.slice(1,3)
+  const userClassNumber = Number(userClass)
   const [section, setSection] = useState<'A' | 'B' | ''>(() =>
     userClassNumber === 1 || userClassNumber === 10 ? 'A' : ''
-  );
+  )
     
   const handleConfirm = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     const res = await fetch("/api/confirm-representative", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -45,16 +45,16 @@ export default function ConfirmRepresentativePage() {
         "grade": userGrade,
         "class": userClassNumber+section,
       }),
-    });
+    })
 
     if (res.ok) {
-      session.user.grade = userGrade;
-      session.user.class = userClassNumber+section;
-      router.push("/");
+      session.user.grade = userGrade
+      session.user.class = userClassNumber+section
+      router.push("/")
     } else {
-      const data = await res.json();
-      console.log(data.error);
-      setIsLoading(false);
+      const data = await res.json()
+      console.log(data.error)
+      setIsLoading(false)
     }
   }
 
