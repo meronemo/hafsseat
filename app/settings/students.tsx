@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useRef, type ChangeEvent } from "react"
+import { useState, useEffect, useRef, type ChangeEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 import { Plus, Trash2, Loader2 } from "lucide-react"
 
 interface Student {
@@ -15,7 +16,8 @@ export function StudentsSettings() {
   const [newStudentNumber, setNewStudentNumber] = useState("")
   const [newStudentName, setNewStudentName] = useState("")
   const [validationError, setValidationError] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [saveLoading, setSaveLoading] = useState(false)
+  const [studentLoading, setStudentLoading] = useState(false)
   const numberInputRef = useRef<HTMLInputElement>(null)
 
   const addStudent = () => {
@@ -58,9 +60,9 @@ export function StudentsSettings() {
   }
 
   const handleSave = async () => {
-    setLoading(true)
+    setSaveLoading(true)
 
-    const res = await fetch("/api/settings/students", {
+    const res = await fetch("/api/students", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(students.map(s => ({
@@ -68,9 +70,9 @@ export function StudentsSettings() {
         name: s.name
       }))),
     })
-    setLoading(false)
+    setSaveLoading(false)
     if (res.ok) {
-      alert('success')
+      toast.success("학생 정보가 저장되었습니다.")
     } else {
       const data = await res.json()
       console.log(data.error)
@@ -78,6 +80,28 @@ export function StudentsSettings() {
 
     return
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/students", {
+          method: "GET",
+        })
+        if (!res.ok) {
+          console.error("Failed to fetch students:", res.status)
+          return
+        }
+        const json = await res.json()
+        const studentsData = json.students
+        setStudents(studentsData)
+      } catch (error) {
+        console.error(error)
+      }
+      setStudentLoading(false)
+    }
+    setStudentLoading(true)
+    fetchData()
+  }, [])
 
   return (
     <div className="space-y-4">
@@ -117,52 +141,63 @@ export function StudentsSettings() {
       </div>
 
       {/* Students List */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold">학생 목록 ({students.length}명)</h3>
+      {studentLoading ? (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-semibold">학생 목록</h3>
+          </div>
+          <div className="w-8 h-8 mx-auto border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
-        
-        {students.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <p className="text-sm">등록된 학생이 없습니다</p>
-          </div>
-        ) : (
+      ) : (
+        <div className="space-y-2">
           <div className="space-y-2">
-            {students.map((student) => (
-              <div
-                key={student.number}
-                className="flex items-center justify-between bg-muted/30 rounded-lg px-4 py-3 hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
-                    {student.number}
-                  </div>
-                  <span className="font-medium">{student.name}</span>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => deleteStudent(student.number)}
-                  className="rounded-full text-destructive hover:text-destructive hover:bg-destructive/10"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold">학생 목록 ({students.length}명)</h3>
+            </div>
+            
+            {students.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p className="text-sm">등록된 학생이 없습니다</p>
               </div>
-            ))}
+            ) : (
+              <div className="space-y-2">
+                {students.map((student) => (
+                  <div
+                    key={student.number}
+                    className="flex items-center justify-between bg-muted/30 rounded-lg px-4 py-3 hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
+                        {student.number}
+                      </div>
+                      <span className="font-medium">{student.name}</span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => deleteStudent(student.number)}
+                      className="rounded-full text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Button
-          size="lg"
-          onClick={handleSave}
-          disabled={loading}
-          className="px-6"
-        >
-          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "저장"}
-        </Button>
-      </div>
+    
+          <div className="space-y-2">
+            <Button
+              size="lg"
+              onClick={handleSave}
+              disabled={saveLoading}
+              className="px-6"
+            >
+              {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "저장"}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

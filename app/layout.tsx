@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
 import { SessionProviderClient } from './providers/SessionProviderClient'
+import { Toaster } from "sonner"
 import "./globals.css"
 
 const pretendard = localFont({
@@ -26,6 +27,7 @@ export default function RootLayout({
         className={`${pretendard.className} antialiased`}
       >
         <SessionProviderClient>{children}</SessionProviderClient>
+        <Toaster />
       </body>
     </html>
   )
