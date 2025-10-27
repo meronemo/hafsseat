@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "../../auth/[...nextauth]/route"
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { defaultSettings } from "@/types/settings"
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -19,18 +20,10 @@ export async function POST(req: Request) {
 
     const userClassId = session.user.classId
 
-    const defaultData = {
-      rows: 8,
-      columns: 4,
-      avoidSameSeat: true,
-      avoidSamePartner: true,
-      avoidBackRow: true,
-    }
-
     const { error } = await supabase
       .schema("next_auth")
       .from("classes")
-      .update({settings: defaultData})
+      .update({settings: defaultSettings})
       .eq("id", userClassId)
 
     if (error) return NextResponse.json({ error: error }, { status: 400 })
