@@ -47,13 +47,12 @@ export const authOptions = {
           const { data, error } = await supabaseAdmin
             .schema("next_auth")
             .from("users")
-            .select("grade, class")
+            .select("classId")
             .eq("email", session.user.email)
             .single()
           
           if (!error && data) {
-            session.user.grade = data.grade ?? null
-            session.user.class = data.class ?? null
+            session.user.classId = data.classId
           }
         }
       } catch (e) {

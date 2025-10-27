@@ -50,18 +50,6 @@ export function StudentsSettings() {
     setStudents(students.filter(s => s.number !== number))
   }
 
-  const getStudentByNumber = (number: number): Student | undefined => {
-    return students.find(s => s.number === number)
-  }
-
-  const getAllStudentNames = (): string[] => {
-    return students.map(s => s.name)
-  }
-
-  const getAllStudentNumbers = (): number[] => {
-    return students.map(s => s.number)
-  }
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       addStudent()
@@ -69,8 +57,25 @@ export function StudentsSettings() {
     }
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setLoading(true)
+
+    const res = await fetch("/api/settings/students", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(students.map(s => ({
+        number: s.number,
+        name: s.name
+      }))),
+    })
+    setLoading(false)
+    if (res.ok) {
+      alert('success')
+    } else {
+      const data = await res.json()
+      console.log(data.error)
+    }
+
     return
   }
 
