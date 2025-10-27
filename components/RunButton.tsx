@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { Shuffle } from "lucide-react"
+import { Shuffle, Loader2 } from "lucide-react"
 
 export function RunButton() {
   const [isRunning, setIsRunning] = useState(false)
@@ -27,8 +27,17 @@ export function RunButton() {
       disabled={isRunning}
       className="text-lg px-8 py-4 shadow-lg hover:shadow-xl transition-all"
     >
-      <Shuffle className="w-5 h-5 mr-2" />
-      {isRunning ? "실행 중..." : "자리 배치 실행"}
+      {isRunning ? (
+        <div className="flex gap-2 items-center">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          <p>자리 배치 실행 중</p>
+        </div>
+      ) : (
+        <div className="flex gap-2 items-center">
+          <Shuffle className="w-5 h-5 mr-2" />
+          <p>자리 배치 실행</p>
+        </div>
+      )}
     </Button>
   )
 }
