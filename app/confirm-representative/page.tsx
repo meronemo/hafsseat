@@ -19,7 +19,7 @@ export default function ConfirmRepresentativePage() {
   const user = session?.user
 
   useEffect(() => {
-    if (!user || (user?.grade && user?.class)) {
+    if (!user || user?.classId) {
       router.push("/")
     }
   }, [user, router])
@@ -48,8 +48,10 @@ export default function ConfirmRepresentativePage() {
     })
 
     if (res.ok) {
+      const data = await res.json()
       session.user.grade = userGrade
       session.user.class = userClassNumber+section
+      session.user.classId = data.classId
       router.push("/")
     } else {
       const data = await res.json()

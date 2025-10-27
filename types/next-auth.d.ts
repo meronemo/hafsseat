@@ -8,6 +8,8 @@ declare module "next-auth" {
       username?: string | null // name without student id
       email?: string | null
       classId?: string | null
+      grade?: number | null
+      class?: string | null
     }
   }
 }

@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation"
 export default function Home() {
   const { data: session, status } = useSession()
   const user = session?.user as any
-  const isFirstLogin = user && (user.grade === null || user.class === null)
+  const isFirstLogin = user && user.classId === null
   const router = useRouter()
 
   useEffect(() => {

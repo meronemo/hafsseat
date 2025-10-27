@@ -21,15 +21,24 @@ export async function POST(req: Request) {
     const userGrade = Number(body?.grade)
     const userClass = body?.class
 
-    const { error } = await supabase
+    const { data, error: e1 } = await supabase
+      .schema("next_auth")
+      .from("classes")
+      .select("id")
+      .eq("grade", userGrade)
+      .eq("class", userClass)
+    
+    if (!data) return NextResponse.json({ error: "Cannot fetch class id" }, { status: 400 })
+
+    const { error: e2 } = await supabase
       .schema("next_auth")
       .from("users")
-      .update({ grade: userGrade, class: userClass })
+      .update({ classId: data[0].id, grade: userGrade, class: userClass })
       .eq("email", userEmail)
       .single()
 
-    if (error) return NextResponse.json({ error: error }, { status: 400 })
-    return NextResponse.json({ ok: true })
+    if (e1 || e2) return NextResponse.json({ error: e1 || e2 }, { status: 400 })
+    return NextResponse.json({ ok: true, classId: data[0].id })
   } catch (err) {
     console.error("/api/confirm-representative error:", err)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
