@@ -52,6 +52,18 @@ export default function ConfirmRepresentativePage() {
       session.user.grade = userGrade
       session.user.class = userClassNumber+section
       session.user.classId = data.classId
+    } else {
+      const data = await res.json()
+      console.log(data.error)
+      setIsLoading(false)
+    }
+
+    // initialize class settings data when first login
+    const res2 = await fetch("/api/settings/init", {
+      method: "POST"
+    })
+
+    if (res2.ok) {
       router.push("/")
     } else {
       const data = await res.json()
