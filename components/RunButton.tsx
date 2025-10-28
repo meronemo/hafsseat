@@ -4,9 +4,11 @@ import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Shuffle, Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export function RunButton() {
   const [isRunning, setIsRunning] = useState(false)
+  const router = useRouter()
   const { data: session } = useSession()
 
   if (!session) return
@@ -17,10 +19,9 @@ export function RunButton() {
     const res = await fetch("/api/randomize-seats", {
       method: "POST"
     })
-    const data = await res.json()
 
     if (res.ok) {
-      
+      router.push("/seat")
     } else {
       const data = await res.json()
       console.log(data.error)
