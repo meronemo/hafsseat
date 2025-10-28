@@ -23,28 +23,52 @@ function shuffle<T>(array: T[]): T[] {
   return result
 }
 
-const randomize = async (settings: Settings, students: Student[]) => {
+const randomize = async (settings: Settings, students: Student[], seat: Student[][] | null) => {
   const rows = settings.rows
   const cols = settings.columns
-  let seats: (Student | null)[][] = []
+  const avoidSameSeat = settings.avoidSameSeat
+  const avoidSamePartner = settings.avoidSamePartner
+  const avoidBackRow = settings.avoidBackRow
 
-  let nums = []
-  for (let i=1; i<=students.length; i++) {
-    nums.push(i)
-  }
-  nums = shuffle(nums)
+  let newSeat: (Student | null)[][] = Array.from({ length: rows }, () =>
+    Array(cols).fill(null)
+  )
 
-  let idx = 0
-  for (let r=0; r<rows; r++) {
-    let row: (Student | null)[] = []
-    for (let c=0; c<cols; c++) {
-      row.push(students.find(s => s.number === nums[idx]) ?? null)
-      idx++
+  let seatPool: [number, number][] = []
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      seatPool.push([r, c]);
     }
-    seats.push(row)
+  }
+  seatPool = shuffle(seatPool)
+
+  if (!seat || !avoidBackRow) { // if no past seat exists or no avoidBackRow rule
+    for (let i=0; i<students.length; i++) { 
+      let newRow = seatPool[i][0]
+      let newCol = seatPool[i][1]
+      newSeat[newRow][newCol] = students[i]
+    }
+  } else { // avoidBackRow rule applied
+
+    for (let r=rows-1; r>=0; r--) {
+      for (let c=0; c<cols; c++) {
+        let newRow = 0
+        let newCol = 0
+        let idx = 0
+        if (avoidBackRow && r === rows-1) {
+          while (seatPool[idx][0] === rows-1) {
+            idx++
+          }
+        }
+        newRow = seatPool[idx][0]
+        newCol = seatPool[idx][1]
+        newSeat[newRow][newCol] = seat[r][c]
+        seatPool.splice(idx, 1)
+      }
+    }
   }
 
-  return seats
+  return newSeat
 }
 
 export async function POST(req: Request) {
@@ -59,13 +83,14 @@ export async function POST(req: Request) {
     const { data, error: e1 } = await supabase
       .schema("next_auth")
       .from("classes")
-      .select("settings, students")
+      .select("settings, students, seat")
       .eq("id", classId)
 
     if (!data) return NextResponse.json({ error: "Class settings, students data is null" }, { status: 400 })
     if (e1) return NextResponse.json({ error: e1 }, { status: 400 })
     
-    const seat = await randomize(data[0].settings, data[0].students)
+    const seat = await randomize(data[0].settings, data[0].students, data[0].seat)
+    console.log(seat)
     
     const { error } = await supabase
       .schema("next_auth")
