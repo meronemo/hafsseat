@@ -23,11 +23,13 @@ function shuffle<T>(array: T[]): T[] {
   return result
 }
 
-const randomize = async (settings: Settings, students: Student[], seat: Student[][] | null) => {
+const makeNewSeat = async (
+  settings: Settings,
+  students: Student[],
+  seat: (Student | null)[][] | null
+) => {
   const rows = settings.rows
   const cols = settings.columns
-  const avoidSameSeat = settings.avoidSameSeat
-  const avoidSamePartner = settings.avoidSamePartner
   const avoidBackRow = settings.avoidBackRow
 
   let newSeat: (Student | null)[][] = Array.from({ length: rows }, () =>
@@ -49,7 +51,6 @@ const randomize = async (settings: Settings, students: Student[], seat: Student[
       newSeat[newRow][newCol] = students[i]
     }
   } else { // avoidBackRow rule applied
-
     for (let r=rows-1; r>=0; r--) {
       for (let c=0; c<cols; c++) {
         let newRow = 0
@@ -68,6 +69,85 @@ const randomize = async (settings: Settings, students: Student[], seat: Student[
     }
   }
 
+  return newSeat
+}
+
+const validateNewSeat = (
+  settings: Settings,
+  oldSeat: (Student | null)[][] | null,
+  newSeat: (Student | null)[][]
+): boolean => {
+  if (oldSeat === null) return true
+
+  const rows = settings.rows
+  const cols = settings.columns
+  const avoidSameSeat = settings.avoidSameSeat
+  const avoidSamePartner = settings.avoidSamePartner
+
+  // Check avoidSameSeat rule
+  if (avoidSameSeat) {
+    for (let r=0; r<rows; r++) {
+      for (let c=0; c<cols; c++) {
+        if (oldSeat[r][c] && newSeat[r][c]) {
+          if (oldSeat[r][c]?.number === newSeat[r][c]?.number) {
+            return false
+          }
+        }
+      }
+    }
+  }
+
+  // Check avoidSamePartner rule
+  if (avoidSamePartner) {
+    const oldPairs: Set<string> = new Set()
+    for (let r=0; r<rows; r++) {
+      for (let c=0; c<cols-1; c+=2) {
+        const student1 = oldSeat[r][c]
+        const student2 = oldSeat[r][c+1]
+        if (student1 && student2) {
+          const pair = [student1.number, student2.number].sort((a, b) => a - b).join('-')
+          oldPairs.add(pair)
+        }
+      }
+    }
+
+    // Check if any new partner pairs match old pairs
+    for (let r=0; r<rows; r++) {
+      for (let c=0; c<cols-1; c+=2) {
+        const student1 = newSeat[r][c]
+        const student2 = newSeat[r][c+1]
+        if (student1 && student2) {
+          const pair = [student1.number, student2.number].sort((a, b) => a - b).join('-')
+          if (oldPairs.has(pair)) {
+            return false
+          }
+        }
+      }
+    }
+  }
+
+  return true
+}
+
+const randomize = async (
+  settings: Settings,
+  students: Student[],
+  seat: (Student | null)[][] | null
+) => {
+  let newSeat: (Student | null)[][] = []
+  let attempts = 0
+  const maxAttempts = 1000
+
+  do {
+    newSeat = await makeNewSeat(settings, students, seat)
+    attempts++
+    if (attempts >= maxAttempts) {
+      console.warn(`Failed to generate valid seat after ${maxAttempts} attempts`)
+      break
+    }
+  } while (!validateNewSeat(settings, seat, newSeat))
+    
+  console.log(attempts)
   return newSeat
 }
 
