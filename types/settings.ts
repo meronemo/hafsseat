@@ -7,8 +7,8 @@ export interface Settings {
 }
 
 export const defaultSettings: Settings = {
-  rows: 8,
-  columns: 4,
+  rows: 4,
+  columns: 8,
   avoidSameSeat: true,
   avoidSamePartner: true,
   avoidBackRow: true,
