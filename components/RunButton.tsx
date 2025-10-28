@@ -14,8 +14,17 @@ export function RunButton() {
   const handleRun = async () => {
     setIsRunning(true)
 
-    // Simulate randomization process
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    const res = await fetch("/api/randomize-seats", {
+      method: "POST"
+    })
+    const data = await res.json()
+
+    if (res.ok) {
+      
+    } else {
+      const data = await res.json()
+      console.log(data.error)
+    }
 
     setIsRunning(false)
   }
