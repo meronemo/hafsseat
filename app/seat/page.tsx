@@ -12,9 +12,13 @@ interface Student {
   name: string
 }
 
-function TeacherDesk() {
+interface TeacherDeskProps {
+  viewMode?: "student" | "teacher"
+}
+
+function TeacherDesk({ viewMode }: TeacherDeskProps) {
   return (
-    <div className="mb-8 text-center">
+    <div className={`${viewMode === "student" ? "mb-10" : "mt-10"} text-center`}>
       <div className="inline-block px-12 py-3 bg-primary/10 border-2 border-primary rounded-lg">
         <p className="text-lg font-semibold text-primary">교탁</p>
       </div>
@@ -136,34 +140,46 @@ export default function SeatPage() {
             뒤로가기
           </Button>
 
-          {/* Tabs */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex gap-1 bg-muted p-1 rounded-lg">
-            <Button
-              variant={viewMode === "student" ? "default" : "ghost"}
-              onClick={() => setViewMode("student")}
-              className="gap-2"
-            >
-              학생용
-            </Button>
-            <Button
-              variant={viewMode === "teacher" ? "default" : "ghost"}
-              onClick={() => setViewMode("teacher")}
-              className="gap-2"
-            >
-              교사용
-            </Button>
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-4">
+            {/* Tabs */}
+            <div className="flex gap-1 bg-muted p-1 rounded-lg">
+              <Button
+                variant={viewMode === "student" ? "default" : "ghost"}
+                onClick={() => setViewMode("student")}
+                size="sm"
+              >
+                학생용
+              </Button>
+              <Button
+                variant={viewMode === "teacher" ? "default" : "ghost"}
+                onClick={() => setViewMode("teacher")}
+                size="sm"
+              >
+                교사용
+              </Button>
+            </div>
+
+            <div className="flex gap-2 pl-4 border-l-2 border-muted-foreground/20">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="gap-2 hover:bg-primary/10"
+              >
+                <Download className="w-4 h-4" />
+                저장
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="gap-2 hover:bg-primary/10"
+              >
+                <Printer className="w-4 h-4" />
+                인쇄
+              </Button>
+            </div>
           </div>
 
-          <div className="flex gap-2">
-            <Button variant="outline" className="gap-2">
-              <Download className="w-4 h-4" />
-              저장
-            </Button>
-            <Button variant="outline" className="gap-2">
-              <Printer className="w-4 h-4" />
-              인쇄
-            </Button>
-          </div>
+          <div className="w-24"></div>
         </div>
 
         {/* Seat View Card*/}
@@ -186,7 +202,7 @@ export default function SeatPage() {
           
           {viewMode === "student" ? (
             <CardContent className="pb-3">
-              <TeacherDesk />  
+              <TeacherDesk viewMode={viewMode}/>  
               {loading ? (
                 <LoadingSkeleton />
               ) : (
@@ -200,7 +216,7 @@ export default function SeatPage() {
               ) : (
                 <SeatGrid seat={reverseSeat} cols={cols} />
               )}
-              <TeacherDesk />  
+              <TeacherDesk viewMode={viewMode}/>  
             </CardContent>
           )}
         </Card>
