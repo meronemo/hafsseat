@@ -172,7 +172,7 @@ export async function POST(req: Request) {
     if (e1) return NextResponse.json({ error: e1 }, { status: 400 })
     
     const settings = data[0].settings
-    const students = data[0].students
+    const students = data[0].students.data
     const seat = data[0].seat
 
     const applyRules = seat && !settings.changed && !students.changed
