@@ -4,6 +4,7 @@ export interface Settings {
   avoidSameSeat: boolean
   avoidSamePartner: boolean
   avoidBackRow: boolean
+  changed: boolean
 }
 
 export const defaultSettings: Settings = {
@@ -12,4 +13,5 @@ export const defaultSettings: Settings = {
   avoidSameSeat: true,
   avoidSamePartner: true,
   avoidBackRow: true,
+  changed: false
 }

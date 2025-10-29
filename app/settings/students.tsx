@@ -62,7 +62,7 @@ export function StudentsSettings() {
   const handleSave = async () => {
     setSaveLoading(true)
 
-    const res = await fetch("/api/students", {
+    const res = await fetch("/api/settings/students", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(students.map(s => ({
@@ -84,7 +84,7 @@ export function StudentsSettings() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("/api/students", {
+        const res = await fetch("/api/settings/students", {
           method: "GET",
         })
         if (!res.ok) {
