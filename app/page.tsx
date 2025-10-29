@@ -59,7 +59,7 @@ export default function Home() {
                   </Alert>
                 )}
 
-                {settingsChanged && (
+                {!isSeatNull && settingsChanged && (
                   <Alert className="w-fit mx-auto">
                     <AlertCircleIcon className="h-4 w-4" />
                     <AlertTitle>
