@@ -8,6 +8,11 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+interface Student {
+  number: number
+  name: string
+}
+
 export async function GET(req: Request) {
   try {
     const session: any = await getServerSession(authOptions as any)
@@ -25,8 +30,18 @@ export async function GET(req: Request) {
       .eq("id", userClassId)
 
     if (error) return NextResponse.json({ error: error }, { status: 400 })
-    console.log(data)
-    return NextResponse.json({ ok: true, grade: data[0].grade, class: data[0].class, seat: data[0].seat, date: data[0].date })
+
+    const seat = data[0].seat
+    let reverseSeat: (Student | null)[][] = []
+    for (let i=seat.length-1; i>=0; i--) {
+      let newRow: (Student | null)[] = []
+      for (let j=seat[0].length-1; j>=0; j--) {
+        newRow.push(seat[i][j])
+      }
+      reverseSeat.push(newRow)
+    }
+    console.log(reverseSeat)
+    return NextResponse.json({ ok: true, grade: data[0].grade, class: data[0].class, seat: seat, reverseSeat: reverseSeat, date: data[0].date })
   } catch (err) {
     console.error("/api/settings error:", err)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
