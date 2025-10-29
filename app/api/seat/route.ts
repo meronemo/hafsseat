@@ -21,12 +21,12 @@ export async function GET(req: Request) {
     const { data, error } = await supabase
       .schema("next_auth")
       .from("classes")
-      .select("seat")
+      .select("grade, class, seat, date")
       .eq("id", userClassId)
 
     if (error) return NextResponse.json({ error: error }, { status: 400 })
     console.log(data)
-    return NextResponse.json({ ok: true, data: data[0].seat })
+    return NextResponse.json({ ok: true, grade: data[0].grade, class: data[0].class, seat: data[0].seat, date: data[0].date })
   } catch (err) {
     console.error("/api/settings error:", err)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })

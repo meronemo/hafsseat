@@ -147,7 +147,6 @@ const randomize = async (
     }
   } while (!validateNewSeat(settings, seat, newSeat))
     
-  console.log(attempts)
   return newSeat
 }
 
@@ -170,12 +169,14 @@ export async function POST(req: Request) {
     if (e1) return NextResponse.json({ error: e1 }, { status: 400 })
     
     const seat = await randomize(data[0].settings, data[0].students, data[0].seat)
-    console.log(seat)
+    
+    const now = new Date()
+    const dateString = `${now.getFullYear()}. ${now.getMonth() + 1}. ${now.getDate()}.`
     
     const { error } = await supabase
       .schema("next_auth")
       .from("classes")
-      .update({ seat })
+      .update({ seat, date: dateString })
       .eq("id", classId)
     
     if (error) return NextResponse.json({ error: error }, { status: 400 })

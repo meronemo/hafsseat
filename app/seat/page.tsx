@@ -14,6 +14,9 @@ interface Student {
 
 export default function SeatPage() {
   const router = useRouter()
+  const [grade, setGrade] = useState(0)
+  const [cls, setCls] = useState("")
+  const [date, setDate] = useState("")
   const [seat, setSeat] = useState<(Student | null)[][]>([])
   const [rows, setRows] = useState(0)
   const [cols, setCols] = useState(0)
@@ -30,9 +33,12 @@ export default function SeatPage() {
         setLoading(false)
         return
       }
-      setSeat(json.data)
-      setRows(json.data.length)
-      setCols(json.data[0]?.length)
+      setGrade(json.grade)
+      setCls(json.class)
+      setDate(json.date)
+      setSeat(json.seat)
+      setRows(json.seat.length)
+      setCols(json.seat[0]?.length)
       setLoading(false)
     }
     fetchData()
@@ -67,10 +73,19 @@ export default function SeatPage() {
         {/* Seat View Card*/}
         <Card id="seat-view" className="border-2">
           <CardHeader className="text-center border-b">
-            <CardTitle className="text-4xl font-bold">1학년 6반 자리 배치도</CardTitle>
-            <p className="text-muted-foreground">
-              2025. 10. 29.
-            </p>
+            {loading ? (
+              <div className="space-y-3 flex flex-col items-center">
+                <Skeleton className="h-10 w-64 bg-muted-foreground/20" />
+                <Skeleton className="h-4 w-32 bg-muted-foreground/20" />
+              </div>
+            ) : (
+              <>
+                <CardTitle className="text-4xl font-bold">{grade}학년 {cls}반 자리 배치도</CardTitle>
+                <p className="text-muted-foreground">
+                  {date}
+                </p>
+              </>
+            )}
           </CardHeader>
 
           <CardContent className="pb-3">
