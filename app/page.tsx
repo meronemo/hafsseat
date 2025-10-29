@@ -13,6 +13,10 @@ export default function Home() {
   const user = session?.user as any
   const isFirstLogin = user && user.classId === null
   const router = useRouter()
+  const [seatCount, setSeatCount] = useState(0)
+  const [studentCount, setStudentCount] = useState(0)
+  const [tooManyStudents, setTooManyStudents] = useState(false)
+  const [noStudents, setNoStudents] = useState(false)
   const [isSeatNull, setIsSeatNull] = useState(false) 
   const [settingsChanged, setSettingsChanged] = useState(false)
 
@@ -24,7 +28,12 @@ export default function Home() {
     const checkStatus = async () => {
       const { seat } = await fetch('/api/view-seat').then(r => r.json())
       const { settings } = await fetch('/api/settings').then(r => r.json())
-      const { changed: studentsChanged } = await fetch('/api/settings/students').then(r => r.json())
+      const { students, changed: studentsChanged } = await fetch('/api/settings/students').then(r => r.json())
+      console.log(settings.rows, settings.columns, students.length)
+      setTooManyStudents(settings.rows * settings.columns < students.length)
+      setSeatCount(settings.rows * settings.columns)
+      setStudentCount(students.length)
+      setNoStudents(students.length === 0)
       setIsSeatNull(!seat)
       setSettingsChanged(settings.changed || studentsChanged)
     }
@@ -47,7 +56,33 @@ export default function Home() {
                   <UserArea />
                 </div>
 
-                {isSeatNull && (
+                {/* alerts for wrong settings */}
+                {tooManyStudents && (
+                  <Alert className="w-fit mx-auto" variant="destructive">
+                    <AlertCircleIcon className="h-4 w-4" />
+                    <AlertTitle>
+                      자리 수({seatCount})보다 학생 수({studentCount})가 더 많아 배치가 불가합니다.
+                    </AlertTitle>
+                    <AlertDescription>
+                      학급 설정을 변경해주세요.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {noStudents && (
+                  <Alert className="w-fit mx-auto" variant="destructive">
+                    <AlertCircleIcon className="h-4 w-4" />
+                    <AlertTitle>
+                      학급에 학생이 등록되지 않았습니다.
+                    </AlertTitle>
+                    <AlertDescription>
+                      학급 설정에서 학생 정보를 입력해주세요.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {/* alerts for rules not being applied */}
+                {!tooManyStudents && !noStudents && isSeatNull && (
                   <Alert className="w-fit mx-auto">
                     <AlertCircleIcon className="h-4 w-4" />
                     <AlertTitle>
@@ -59,7 +94,7 @@ export default function Home() {
                   </Alert>
                 )}
 
-                {!isSeatNull && settingsChanged && (
+                {!tooManyStudents && !noStudents && !isSeatNull && settingsChanged && (
                   <Alert className="w-fit mx-auto">
                     <AlertCircleIcon className="h-4 w-4" />
                     <AlertTitle>
@@ -72,7 +107,7 @@ export default function Home() {
                 )}
 
                 <div className="text-center">
-                  <RunButton />
+                  <RunButton disabled={(tooManyStudents || noStudents)}/>
                 </div>
               </div>
             ) : (

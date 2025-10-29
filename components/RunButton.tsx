@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Shuffle, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-export function RunButton() {
+interface RunButtonProps {
+  disabled?: boolean
+}
+
+export function RunButton({ disabled = false }: RunButtonProps) {
   const [isRunning, setIsRunning] = useState(false)
   const router = useRouter()
   const { data: session } = useSession()
@@ -34,7 +38,7 @@ export function RunButton() {
     <Button
       size="lg"
       onClick={handleRun}
-      disabled={isRunning}
+      disabled={isRunning || disabled}
       className="text-lg px-8 py-4 shadow-lg hover:shadow-xl transition-all"
     >
       {isRunning ? (
