@@ -54,7 +54,6 @@ export async function POST(req: Request) {
     
     // set changed=true if students data is changed
     const currentStudentsData = data[0].students.data
-    console.log(body, currentStudentsData, isEqual(body, currentStudentsData))
     if (!isEqual(body, currentStudentsData) || data[0].students.changed) {
       changed = true
     }

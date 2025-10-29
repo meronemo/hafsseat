@@ -2,16 +2,12 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]/route"
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { Student } from "@/types/settings"
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
-
-interface Student {
-  number: number
-  name: string
-}
 
 export async function GET(req: Request) {
   try {

@@ -5,11 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { Plus, Trash2, Loader2 } from "lucide-react"
-
-interface Student {
-  number: number
-  name: string
-}
+import { Student } from "@/types/settings"
 
 export function StudentsSettings() {
   const [students, setStudents] = useState<Student[]>([])

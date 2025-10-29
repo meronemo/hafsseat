@@ -2,17 +2,12 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]/route"
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
-import { Settings } from "@/types/settings"
+import { Settings, Student } from "@/types/settings"
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
-
-interface Student {
-  name: string
-  number: number
-}
 
 function shuffle<T>(array: T[]): T[] {
   const result = [...array]
@@ -44,7 +39,7 @@ const makeNewSeat = async (
     }
   }
   seatPool = shuffle(seatPool)
-
+  
   if (!seat || !applyRules || !avoidBackRow) { // if applyRules is false or no avoidBackRow rule
     for (let i=0; i<students.length; i++) { 
       let newRow = seatPool[i][0]
@@ -173,9 +168,10 @@ export async function POST(req: Request) {
     
     const settings = data[0].settings
     const students = data[0].students.data
+    const studentsChanged = data[0].students.changed
     const seat = data[0].seat
 
-    const applyRules = seat && !settings.changed && !students.changed
+    const applyRules = !(!seat || settings.changed || studentsChanged) // true if current seat is not blank or setting is not changed or students is not changed
     const newSeat = await randomize(settings, students, seat, applyRules)
     
     const now = new Date()

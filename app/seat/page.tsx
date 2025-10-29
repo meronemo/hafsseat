@@ -6,11 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Download, Printer, ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
-
-interface Student {
-  number: number
-  name: string
-}
+import { Student } from "@/types/settings"
 
 interface TeacherDeskProps {
   viewMode?: "student" | "teacher"
