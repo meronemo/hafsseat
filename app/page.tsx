@@ -1,21 +1,34 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
 import { UserArea } from "@/components/UserArea"
 import { RunButton } from "@/components/RunButton"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { useRouter } from "next/navigation"
+import { AlertCircleIcon } from "lucide-react"
 
 export default function Home() {
   const { data: session, status } = useSession()
   const user = session?.user as any
   const isFirstLogin = user && user.classId === null
   const router = useRouter()
+  const [isSeatNull, setIsSeatNull] = useState(false) 
+  const [settingsChanged, setSettingsChanged] = useState(false)
 
   useEffect(() => {
     if (isFirstLogin) {
       router.push("/confirm-representative")
     }
+
+    const checkStatus = async () => {
+      const { seat } = await fetch('/api/seat').then(r => r.json())
+      const { settings } = await fetch('/api/settings').then(r => r.json())
+      const { students } = await fetch('/api/settings/students').then(r => r.json())
+      setIsSeatNull(!seat)
+      setSettingsChanged(settings.changed || students.changed)
+    }
+    checkStatus()
   }, [isFirstLogin, router])
 
   return (
@@ -33,6 +46,31 @@ export default function Home() {
                 <div className="text-center">
                   <UserArea />
                 </div>
+
+                {isSeatNull && (
+                  <Alert className="w-fit mx-auto">
+                    <AlertCircleIcon className="h-4 w-4" />
+                    <AlertTitle>
+                      첫 자리배치 시에는 규칙이 적용되지 않습니다.
+                    </AlertTitle>
+                    <AlertDescription>
+                      현재 자리 배치를 직접 입력하여 규칙을 적용할 수 있습니다.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {settingsChanged && (
+                  <Alert className="w-fit mx-auto">
+                    <AlertCircleIcon className="h-4 w-4" />
+                    <AlertTitle>
+                      자리 구조 또는 학생 설정이 변경되어 다음 자리배치 시 규칙이 적용되지 않습니다.
+                    </AlertTitle>
+                    <AlertDescription>
+                      변경된 설정에 맞는 자리 배치를 직접 입력하여 규칙을 적용할 수 있습니다.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 <div className="text-center">
                   <RunButton />
                 </div>

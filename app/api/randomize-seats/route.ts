@@ -26,7 +26,8 @@ function shuffle<T>(array: T[]): T[] {
 const makeNewSeat = async (
   settings: Settings,
   students: Student[],
-  seat: (Student | null)[][] | null
+  seat: (Student | null)[][] | null,
+  applyRules: boolean
 ) => {
   const rows = settings.rows
   const cols = settings.columns
@@ -44,7 +45,7 @@ const makeNewSeat = async (
   }
   seatPool = shuffle(seatPool)
 
-  if (!seat || !avoidBackRow) { // if no past seat exists or no avoidBackRow rule
+  if (!seat || !applyRules || !avoidBackRow) { // if applyRules is false or no avoidBackRow rule
     for (let i=0; i<students.length; i++) { 
       let newRow = seatPool[i][0]
       let newCol = seatPool[i][1]
@@ -75,9 +76,10 @@ const makeNewSeat = async (
 const validateNewSeat = (
   settings: Settings,
   oldSeat: (Student | null)[][] | null,
-  newSeat: (Student | null)[][]
+  newSeat: (Student | null)[][],
+  applyRules: boolean
 ): boolean => {
-  if (oldSeat === null) return true
+  if (oldSeat === null || !applyRules) return true
 
   const rows = settings.rows
   const cols = settings.columns
@@ -132,20 +134,21 @@ const validateNewSeat = (
 const randomize = async (
   settings: Settings,
   students: Student[],
-  seat: (Student | null)[][] | null
+  seat: (Student | null)[][] | null,
+  applyRules: boolean
 ) => {
   let newSeat: (Student | null)[][] = []
   let attempts = 0
   const maxAttempts = 1000
 
   do {
-    newSeat = await makeNewSeat(settings, students, seat)
+    newSeat = await makeNewSeat(settings, students, seat, applyRules)
     attempts++
     if (attempts >= maxAttempts) {
       console.warn(`Failed to generate valid seat after ${maxAttempts} attempts`)
       break
     }
-  } while (!validateNewSeat(settings, seat, newSeat))
+  } while (!validateNewSeat(settings, seat, newSeat, applyRules))
     
   return newSeat
 }
@@ -168,15 +171,29 @@ export async function POST(req: Request) {
     if (!data) return NextResponse.json({ error: "Class settings, students data is null" }, { status: 400 })
     if (e1) return NextResponse.json({ error: e1 }, { status: 400 })
     
-    const seat = await randomize(data[0].settings, data[0].students, data[0].seat)
+    const settings = data[0].settings
+    const students = data[0].students
+    const seat = data[0].seat
+
+    const applyRules = seat && !settings.changed && !students.changed
+    const newSeat = await randomize(settings, students, seat, applyRules)
     
     const now = new Date()
     const dateString = `${now.getFullYear()}. ${now.getMonth() + 1}. ${now.getDate()}.`
     
+    // reset changed flags
+    const updatedSettings = { ...data[0].settings, changed: false }
+    const updatedStudents = { ...data[0].students, changed: false }
+    
     const { error } = await supabase
       .schema("next_auth")
       .from("classes")
-      .update({ seat, date: dateString })
+      .update({ 
+        seat: newSeat, 
+        date: dateString,
+        settings: updatedSettings,
+        students: updatedStudents
+      })
       .eq("id", classId)
     
     if (error) return NextResponse.json({ error: error }, { status: 400 })

@@ -32,15 +32,19 @@ export async function GET(req: Request) {
     if (error) return NextResponse.json({ error: error }, { status: 400 })
 
     const seat = data[0].seat
-    let reverseSeat: (Student | null)[][] = []
-    for (let i=seat.length-1; i>=0; i--) {
-      let newRow: (Student | null)[] = []
-      for (let j=seat[0].length-1; j>=0; j--) {
-        newRow.push(seat[i][j])
+    let reverseSeat: ((Student | null)[][] | null)
+    if (seat) {
+      reverseSeat = []
+      for (let i=seat.length-1; i>=0; i--) {
+        let newRow: (Student | null)[] = []
+        for (let j=seat[0].length-1; j>=0; j--) {
+          newRow.push(seat[i][j])
+        }
+        reverseSeat.push(newRow)
       }
-      reverseSeat.push(newRow)
+    } else {
+      reverseSeat = null
     }
-    console.log(reverseSeat)
     return NextResponse.json({ ok: true, grade: data[0].grade, class: data[0].class, seat: seat, reverseSeat: reverseSeat, date: data[0].date })
   } catch (err) {
     console.error("/api/settings error:", err)
