@@ -24,9 +24,9 @@ export default function Home() {
     const checkStatus = async () => {
       const { seat } = await fetch('/api/seat').then(r => r.json())
       const { settings } = await fetch('/api/settings').then(r => r.json())
-      const { students } = await fetch('/api/settings/students').then(r => r.json())
+      const { changed: studentsChanged } = await fetch('/api/settings/students').then(r => r.json())
       setIsSeatNull(!seat)
-      setSettingsChanged(settings.changed || students.changed)
+      setSettingsChanged(settings.changed || studentsChanged)
     }
     checkStatus()
   }, [isFirstLogin, router])

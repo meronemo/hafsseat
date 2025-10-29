@@ -26,7 +26,7 @@ export async function GET(req: Request) {
       .eq("id", userClassId)
 
     if (error) return NextResponse.json({ error: error }, { status: 400 })
-    return NextResponse.json({ ok: true, students: data[0].students.data })
+    return NextResponse.json({ ok: true, students: data[0].students.data, changed: data[0].students.changed })
   } catch (err) {
     console.error("/api/settings/students error:", err)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
