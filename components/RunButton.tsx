@@ -16,7 +16,7 @@ export function RunButton() {
   const handleRun = async () => {
     setIsRunning(true)
 
-    const res = await fetch("/api/randomize-seats", {
+    const res = await fetch("/api/randomize-seat", {
       method: "POST"
     })
 

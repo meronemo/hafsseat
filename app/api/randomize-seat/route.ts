@@ -195,7 +195,7 @@ export async function POST(req: Request) {
     if (error) return NextResponse.json({ error: error }, { status: 400 })
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error("/api/randomize-seats error:", err)
+    console.error("/api/randomize-seat error:", err)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }

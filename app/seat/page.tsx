@@ -102,7 +102,7 @@ export default function SeatPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch("/api/seat", {
+      const res = await fetch("/api/view-seat", {
           method: "GET",
       })
       const json = await res.json()
