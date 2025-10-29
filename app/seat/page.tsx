@@ -68,12 +68,12 @@ export default function SeatPage() {
         <Card id="seat-view" className="border-2">
           <CardHeader className="text-center border-b">
             <CardTitle className="text-4xl font-bold">1학년 6반 자리 배치도</CardTitle>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-muted-foreground">
               2025. 10. 29.
             </p>
           </CardHeader>
 
-          <CardContent className="p-8">
+          <CardContent className="pb-3">
             <div className="mb-8 text-center">
               <div className="inline-block px-12 py-3 bg-primary/10 border-2 border-primary rounded-lg">
                 <p className="text-lg font-semibold text-primary">교탁</p>
@@ -98,31 +98,27 @@ export default function SeatPage() {
               </div>
             ) : (
               <div className="flex justify-center">
-                <div
-                  className="grid gap-4"
-                  style={{
-                    gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-                    gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
-                  }}
-                >
-                  {seat.map((row, rowIndex) =>
-                    row.map((student, colIndex) => (
-                      <div
-                        key={`${rowIndex}-${colIndex}`}
-                        className={`
-                          relative w-32 h-20 rounded-lg border-2 
-                          flex flex-col items-center justify-center
-                          transition-all print:break-inside-avoid
-                          ${
-                            student
-                              ? "bg-card border-primary/30"
-                              : "bg-muted/20 border-dashed border-muted-foreground/20"
-                          }
-                        `}
-                      >
+                <div className="flex flex-col gap-4">
+                  {seat.map((row, rowIndex) => (
+                    <div key={rowIndex} className="flex">
+                      {row.map((student, colIndex) => (
+                        <div
+                          key={`${rowIndex}-${colIndex}`}
+                          className={`
+                            relative w-32 h-20 rounded-lg border-2 
+                            flex flex-col items-center justify-center
+                            transition-all print:break-inside-avoid 
+                            ${
+                              student
+                                ? "bg-card border-primary/30"
+                                : "bg-muted/20 border-dashed border-muted-foreground/20"
+                            }
+                            ${colIndex % 2 === 1 && colIndex < cols - 1 ? "mr-8" : "mr-2"}
+                          `}
+                        >
                         {student ? (
                           <>
-                            <div className="absolute top-2 left-2 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
+                            <div className="absolute top-2 left-2 w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
                               {student.number}
                             </div>
 
@@ -133,9 +129,10 @@ export default function SeatPage() {
                         ) : (
                           <p className="text-sm text-muted-foreground">빈자리</p>
                         )}
-                      </div>
-                    ))
-                  )}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
