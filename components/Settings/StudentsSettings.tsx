@@ -1,19 +1,19 @@
 "use client"
 
 import { useState, useEffect, useRef, type ChangeEvent } from "react"
+import { StudentsSettingsProps } from "@/app/settings/page"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { Plus, Trash2, Loader2 } from "lucide-react"
 import { Student } from "@/types/settings"
 
-export function StudentsSettings() {
-  const [students, setStudents] = useState<Student[]>([])
+export function StudentsSettings({ students }: StudentsSettingsProps) {
+  const [studentsState, setStudents] = useState<Student[]>([])
   const [newStudentNumber, setNewStudentNumber] = useState("")
   const [newStudentName, setNewStudentName] = useState("")
   const [validationError, setValidationError] = useState("")
   const [saveLoading, setSaveLoading] = useState(false)
-  const [studentLoading, setStudentLoading] = useState(false)
   const numberInputRef = useRef<HTMLInputElement>(null)
 
   const addStudent = () => {
@@ -27,7 +27,7 @@ export function StudentsSettings() {
       return
     }
 
-    if (students.some(s => s.number === studentNumber)) {
+    if (studentsState.some(s => s.number === studentNumber)) {
       setValidationError("이미 존재하는 번호입니다.")
       return
     }
@@ -39,13 +39,13 @@ export function StudentsSettings() {
       name: newStudentName.trim()
     }
 
-    setStudents([...students, newStudent].sort((a, b) => a.number - b.number))
+    setStudents([...studentsState, newStudent].sort((a, b) => a.number - b.number))
     setNewStudentNumber("")
     setNewStudentName("")
   }
 
   const deleteStudent = (number: number) => {
-    setStudents(students.filter(s => s.number !== number))
+    setStudents(studentsState.filter(s => s.number !== number))
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -61,7 +61,7 @@ export function StudentsSettings() {
     const res = await fetch("/api/settings/students", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(students.map(s => ({
+      body: JSON.stringify(studentsState.map(s => ({
         number: s.number,
         name: s.name
       }))),
@@ -78,25 +78,7 @@ export function StudentsSettings() {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("/api/settings/students", {
-          method: "GET",
-        })
-        if (!res.ok) {
-          console.error("Failed to fetch students:", res.status)
-          return
-        }
-        const json = await res.json()
-        const studentsData = json.students
-        setStudents(studentsData)
-      } catch (error) {
-        console.error(error)
-      }
-      setStudentLoading(false)
-    }
-    setStudentLoading(true)
-    fetchData()
+    setStudents(students)
   }, [])
 
   return (
@@ -137,63 +119,54 @@ export function StudentsSettings() {
       </div>
 
       {/* Students List */}
-      {studentLoading ? (
+      <div className="space-y-2">
         <div className="space-y-2">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold">학생 목록</h3>
+            <h3 className="text-sm font-semibold">학생 목록 ({studentsState.length}명)</h3>
           </div>
-          <div className="w-8 h-8 mx-auto border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-semibold">학생 목록 ({students.length}명)</h3>
+          
+          {studentsState.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <p className="text-sm">등록된 학생이 없습니다</p>
             </div>
-            
-            {students.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <p className="text-sm">등록된 학생이 없습니다</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {students.map((student) => (
-                  <div
-                    key={student.number}
-                    className="flex items-center justify-between bg-muted/30 rounded-lg px-4 py-3 hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
-                        {student.number}
-                      </div>
-                      <span className="font-medium">{student.name}</span>
+          ) : (
+            <div className="space-y-2">
+              {studentsState.map((student) => (
+                <div
+                  key={student.number}
+                  className="flex items-center justify-between bg-muted/30 rounded-lg px-4 py-3 hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
+                      {student.number}
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deleteStudent(student.number)}
-                      className="rounded-full text-destructive hover:text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <span className="font-medium">{student.name}</span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-    
-          <div className="space-y-2">
-            <Button
-              size="lg"
-              onClick={handleSave}
-              disabled={saveLoading}
-              className="px-6"
-            >
-              {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "저장"}
-            </Button>
-          </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => deleteStudent(student.number)}
+                    className="rounded-full text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+  
+        <div className="space-y-2">
+          <Button
+            size="lg"
+            onClick={handleSave}
+            disabled={saveLoading}
+            className="px-6"
+          >
+            {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "저장"}
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }
