@@ -28,23 +28,18 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session }) {
       try {
-        if (session?.user?.name) {
-          try {
-            session.user.username = String(session.user.name).replace(/\d+/g, "").trim()
-          } catch (e) {
-            session.user.username = session.user.name
-          }
-        }
-
         if (session?.user?.email) {
           const { data, error } = await supabase
             .schema("next_auth")
             .from("users")
-            .select("classId, grade, class")
+            .select("classId, grade, class, name")
             .eq("email", session.user.email)
             .single()
           
           if (!error && data) {
+            session.user.name = data.name
+            session.user.username = String(session.user.name).replace(/\d+/g, '')
+            session.user.studentId = String(String(session.user.name).match(/\d+/g))
             session.user.classId = data.classId
             session.user.grade = data.grade
             session.user.class = data.class
