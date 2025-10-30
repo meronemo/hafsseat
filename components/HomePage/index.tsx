@@ -1,12 +1,12 @@
 "use client"
 
 import { HomeProps } from "@/app/page"
-import { UserArea } from "@/components/UserArea"
-import { RunButton } from "@/components/RunButton"
+import { UserArea } from "@/components/HomePage/UserArea"
+import { RunButton } from "@/components/HomePage/RunButton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircleIcon } from "lucide-react"
 
-export default function HomePage({ session, data }: HomeProps) {
+export default function HomePage({ sessionData, data }: HomeProps) {
   const { seatCount=0, studentCount=0, isSeatNull=true, settingsChanged=false } = data || {}
   
   return (
@@ -17,10 +17,10 @@ export default function HomePage({ session, data }: HomeProps) {
           </div>
   
           <div className="text-center space-y-8 w-full">
-            {session ? (
+            {sessionData ? (
               <div className="space-y-6">
                 <div className="text-center">
-                  <UserArea />
+                  <UserArea session={sessionData} />
                 </div>
 
                 {/* alerts for wrong settings */}
@@ -67,11 +67,11 @@ export default function HomePage({ session, data }: HomeProps) {
                 ) : null}
 
                 <div className="text-center">
-                  <RunButton disabled={(seatCount < studentCount || !studentCount)}/>
+                  <RunButton session={sessionData} disabled={(seatCount < studentCount || !studentCount)}/>
                 </div>
               </div>
             ) : (
-              <UserArea />
+              <UserArea session={null} />
             )}
           </div>
         </div>

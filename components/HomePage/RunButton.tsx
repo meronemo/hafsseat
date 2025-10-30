@@ -1,36 +1,34 @@
 "use client"
 
 import { useState } from "react"
-import { useSession } from "next-auth/react"
+import { type Session } from "next-auth"
 import { Button } from "@/components/ui/button"
 import { Shuffle, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface RunButtonProps {
+  session: Session | null
   disabled?: boolean
 }
 
-export function RunButton({ disabled = false }: RunButtonProps) {
+export function RunButton({ session, disabled = false }: RunButtonProps) {
   const [isRunning, setIsRunning] = useState(false)
   const router = useRouter()
-  const { data: session } = useSession()
 
-  if (!session) return
+  if (!session) return null
 
   const handleRun = async () => {
     setIsRunning(true)
-
     const res = await fetch("/api/randomize-seat", {
       method: "POST"
     })
-
+    
     if (res.ok) {
       router.push("/seat")
     } else {
-      const data = await res.json()
-      console.log(data.error)
+      const error = await res.json()
+      console.error(error)
     }
-
     setIsRunning(false)
   }
 

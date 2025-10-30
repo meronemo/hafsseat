@@ -4,9 +4,10 @@ import { viewSeat } from "@/services/view-seat"
 import { getGeneralSettings } from "@/services/settings/general"
 import { getStudentsSettings } from "@/services/settings/students"
 import HomePage from "@/components/HomePage/index"
+import { type Session } from "next-auth"
 
 export interface HomeProps {
-  session: boolean
+  sessionData: Session | null
   data?: {
     seatCount: number
     studentCount: number
@@ -18,7 +19,7 @@ export interface HomeProps {
 export default async function Page() {
   const session = await getServerSideSession()
   if (!session) {
-    return <HomePage session={false} />
+    return <HomePage sessionData={null} />
   }
   if (!session.user.classId) {
     redirect("/confirm-representative")
@@ -41,7 +42,7 @@ export default async function Page() {
     const settingsChanged = generalSettings.changed || studentsSettingsData.changed
   
     return <HomePage 
-      session={true}
+      sessionData={session}
       data={{ seatCount, studentCount, isSeatNull, settingsChanged }}
     />
   } catch (error) {
