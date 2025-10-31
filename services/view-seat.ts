@@ -13,7 +13,7 @@ export async function viewSeat(session: Session) {
   if (error) throw new Error(error.message)
 
   const seat = data[0].seat
-  let reverseSeat: ((Student | null)[][] | null)
+  let reverseSeat: (Student | null)[][] = []
   if (seat) {
     reverseSeat = []
     for (let i=seat.length-1; i>=0; i--) {
@@ -23,8 +23,6 @@ export async function viewSeat(session: Session) {
       }
       reverseSeat.push(newRow)
     }
-  } else {
-    reverseSeat = null
   }
 
   return { ok: true, grade: data[0].grade, class: data[0].class, seat: seat, reverseSeat: reverseSeat, date: data[0].date }
