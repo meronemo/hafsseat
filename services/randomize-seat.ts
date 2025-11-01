@@ -18,6 +18,7 @@ async function makeNewSeat(
   seat: (Student | null)[][] | null,
   applyRules: boolean
 ) {
+  const studentsCount = students.length
   const rows = settings.rows
   const cols = settings.columns
   const avoidBackRow = settings.avoidBackRow
@@ -27,15 +28,17 @@ async function makeNewSeat(
   )
 
   let seatPool: [number, number][] = []
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      seatPool.push([r, c]);
+  for (let r=0; r<rows; r++) {
+    for (let c=0; c<cols; c++) {
+      if (r*cols+c+1 <= studentsCount) {
+        seatPool.push([r, c]);
+      }
     }
   }
   seatPool = shuffle(seatPool)
-  
+
   if (!seat || !applyRules || !avoidBackRow) { // if applyRules is false or no avoidBackRow rule
-    for (let i=0; i<students.length; i++) { 
+    for (let i=0; i<studentsCount; i++) { 
       let newRow = seatPool[i][0]
       let newCol = seatPool[i][1]
       newSeat[newRow][newCol] = students[i]
