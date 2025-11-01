@@ -10,10 +10,17 @@ export default function HomePage({ sessionData, data }: HomeProps) {
   const { seatCount=0, studentCount=0, isSeatNull=true, settingsChanged=false } = data || {}
   
   return (
-      <main className="min-h-screen flex flex-col items-center justify-center p-6">
+    <main className="min-h-screen flex flex-col p-6">
+      <div className="flex-1 flex items-center justify-center">
         <div className="w-full max-w-2xl mx-auto space-y-8">
           <div className="text-center space-y-3">
-            <h1 className="text-5xl md:text-6xl font-bold text-balance tracking-tight">HAFSSeat</h1>
+            <div className="relative inline-block">
+              <h1 className="text-5xl md:text-6xl font-bold text-balance tracking-tight">HAFSSeat</h1>
+              <span className="absolute -top-2 -right-12 md:-right-14 text-xs font-semibold px-2 py-0.5 bg-primary text-primary-foreground rounded-full">
+                Beta
+              </span>
+            </div>
+            <p className=" text-muted-foreground">공정하고 간편한 자리 배치</p>
           </div>
   
           <div className="text-center space-y-8 w-full">
@@ -75,6 +82,14 @@ export default function HomePage({ sessionData, data }: HomeProps) {
             )}
           </div>
         </div>
-      </main>
-    )
+      </div>
+
+      {/* Footer */}
+      <footer className="w-full text-center py-6">
+        <p className="text-sm text-muted-foreground">
+          Made by <span className="font-medium text-foreground">10630최시원</span>
+        </p>
+      </footer>
+    </main>
+  )
 }
