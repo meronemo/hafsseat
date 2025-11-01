@@ -195,3 +195,34 @@
     letter-spacing: var(--tracking-normal);
   }
 }
+
+@media print {
+  @page {
+    size: A4 landscape;
+  }
+
+  body > div {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 100vh !important;
+    padding: 0 !important;
+  }
+
+  .print-content {
+    transform: scale(var(--scale));
+    transform-origin: center center;
+  }
+  
+  .print-bg {
+    background-color: white;
+  }
+  
+  #seat-view {
+    background-color: white;
+    max-width: 297mm;
+    max-height: 210mm;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
