@@ -51,7 +51,10 @@ export default function Settings({ user, generalSettings, students }: SettingsPr
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => router.push("/")}
+                onClick={() => {
+                  router.push("/")
+                  router.refresh()
+                }}
                 className="rounded-full -ml-2"
               >
                 <ArrowLeft className="w-4 h-4" />
