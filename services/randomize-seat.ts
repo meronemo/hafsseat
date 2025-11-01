@@ -46,6 +46,7 @@ async function makeNewSeat(
   } else { // avoidBackRow rule applied
     for (let r=rows-1; r>=0; r--) {
       for (let c=0; c<cols; c++) {
+        if (seatPool.length === 0 || seat[r][c] === null) break
         let newRow = 0
         let newCol = 0
         let idx = 0
