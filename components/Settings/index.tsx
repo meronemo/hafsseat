@@ -11,7 +11,7 @@ import {
   CardTitle,
   CardContent,
 } from "@/components/ui/card"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@bprogress/next/app"
 import { ArrowLeft, User, Info } from "lucide-react"
 
 interface SettingsProps {

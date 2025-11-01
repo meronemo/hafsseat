@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { signOut } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@bprogress/next/app"
 import { Button } from "@/components/ui/button"
 import {
   Card,

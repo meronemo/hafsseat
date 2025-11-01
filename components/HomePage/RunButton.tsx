@@ -4,7 +4,7 @@ import { useState } from "react"
 import { type Session } from "next-auth"
 import { Button } from "@/components/ui/button"
 import { Shuffle, Loader2 } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@bprogress/next/app"
 
 interface RunButtonProps {
   session: Session | null
@@ -28,8 +28,8 @@ export function RunButton({ session, disabled = false }: RunButtonProps) {
     } else {
       const error = await res.json()
       console.error(error)
+      setIsRunning(false)
     }
-    setIsRunning(false)
   }
 
   return (

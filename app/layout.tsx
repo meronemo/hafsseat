@@ -1,6 +1,7 @@
-import type { Metadata } from "next"
 import localFont from "next/font/local"
-import { SessionProviderClient } from './providers/SessionProviderClient'
+import { SessionProviderClient } from "./providers/SessionProviderClient"
+import { PageTransition } from "./providers/PageTransition"
+import ProgressbarProvider from "./providers/ProgressbarProvider"
 import { Toaster } from "sonner"
 import "./globals.css"
 
@@ -10,11 +11,6 @@ const pretendard = localFont({
   weight: "45 920",
   variable: "--font-pretendard",
 })
-
-export const metadata: Metadata = {
-  title: "HAFSSeat",
-  description: "Smart classroom seating arrangement app",
-}
 
 export default function RootLayout({
   children,
@@ -26,8 +22,12 @@ export default function RootLayout({
       <body
         className={`${pretendard.className} antialiased`}
       >
-        <SessionProviderClient>{children}</SessionProviderClient>
-        <Toaster />
+        <ProgressbarProvider>
+          <SessionProviderClient>
+            <PageTransition>{children}</PageTransition>
+            <Toaster />
+          </SessionProviderClient>
+        </ProgressbarProvider>
       </body>
     </html>
   )

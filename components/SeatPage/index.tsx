@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Download, Printer, ArrowLeft } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@bprogress/next/app"
 import { Student } from "@/types/settings"
 
 interface TeacherDeskProps {
