@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card"
 import { useRouter } from "@bprogress/next/app"
 import { ArrowLeft, User, Info } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface SettingsProps {
   user: {
@@ -102,22 +103,40 @@ export default function Settings({ user, generalSettings, students }: SettingsPr
             </div>
 
             {/* Tab Content */}
-            <div className="py-4">
-              {activeTab === "general" && (
-                <GeneralSettings 
-                  rows={generalSettings.rows}
-                  columns={generalSettings.columns}
-                  avoidSameSeat={generalSettings.avoidSameSeat}
-                  avoidSamePartner={generalSettings.avoidSamePartner}
-                  avoidBackRow={generalSettings.avoidBackRow}
-                />
-              )}
-              
-              {activeTab === "students" && (
-                <StudentsSettings 
-                  students={students}
-                />
-              )}
+            <div className="py-4 overflow-hidden">
+              <AnimatePresence mode="wait">
+                {activeTab === "general" && (
+                  <motion.div
+                    key="general"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.1, ease: "easeInOut" }}
+                  >
+                    <GeneralSettings 
+                      rows={generalSettings.rows}
+                      columns={generalSettings.columns}
+                      avoidSameSeat={generalSettings.avoidSameSeat}
+                      avoidSamePartner={generalSettings.avoidSamePartner}
+                      avoidBackRow={generalSettings.avoidBackRow}
+                    />
+                  </motion.div>
+                )}
+                
+                {activeTab === "students" && (
+                  <motion.div
+                    key="students"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.1, ease: "easeInOut" }}
+                  >
+                    <StudentsSettings 
+                      students={students}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </CardContent>
         </Card>
